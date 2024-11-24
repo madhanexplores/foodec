@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Owner Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>Owner Dashboard</h1>
+  </header>
+  <main>
+    <div id="dashboard">
+      <h2>Orders from Tables</h2>
+      <div id="order-list"></div>
+    </div>
+  </main>
+
+  <script>
+    // Load orders from localStorage
+    function loadOrders() {
+      const orderList = document.getElementById('order-list');
+      orderList.innerHTML = ''; // Clear existing orders
+
+      let totalOrders = 0;
+
+      // Loop through each table
+      ['table1', 'table2', 'table3'].forEach(table => {
+        const orders = JSON.parse(localStorage.getItem(table)) || [];
+        if (orders.length > 0) {
+          totalOrders += orders.length;
+
+          const tableDiv = document.createElement('div');
+          tableDiv.className = 'table-orders';
+          tableDiv.innerHTML = `
+            <h3>${table.toUpperCase()}</h3>
+            <ul>
+              ${orders.map(order => `<li>${order.item} - ${order.quantity}</li>`).join('')}
+            </ul>
+            <button onclick="processOrders('${table}')">Mark as Processed</button>
+          `;
+          orderList.appendChild(tableDiv);
+        }
+      });
+
+      if (totalOrders === 0) {
+        orderList.innerHTML = '<p>No orders available.</p>';
+      }
+    }
+
+    // Process orders for a specific table
+    function processOrders(table) {
+      localStorage.removeItem(table); // Remove orders from localStorage
+      alert(`${table.toUpperCase()} orders processed!`);
+      loadOrders(); // Reload orders
+    }
+
+    // Load orders on page load
+    document.addEventListener('DOMContentLoaded', loadOrders);
+  </script>
+</body>
+</html>
